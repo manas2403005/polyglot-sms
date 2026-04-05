@@ -1,6 +1,7 @@
 package com.sms.smssender.controller;
 
 import com.sms.smssender.model.SmsRequest;
+import com.sms.smssender.service.SmsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,12 +9,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/sms")
 public class SmsController {
 
+    private final SmsService smsService;
+
+    public SmsController(SmsService smsService) {
+        this.smsService = smsService;
+    }
+
     @PostMapping("/send")
     public ResponseEntity<String> sendSms(@RequestBody SmsRequest smsRequest) {
-        System.out.println("Received request to send SMS to: "
-                + smsRequest.getPhoneNumber());
-        System.out.println("Message: " + smsRequest.getMessage());
-
-        return ResponseEntity.ok("SMS sent successfully!");
+        String status = smsService.sendSms(smsRequest);
+        return ResponseEntity.ok("SMS Status: " + status);
     }
 }
