@@ -3,24 +3,15 @@
 A distributed SMS notification system built with two microservices communicating via Apache Kafka.
 
 ## Architecture
-Client
-│
-▼
-SMS Sender Service (Java/Spring Boot) - Port 8080
-│
-├── Checks Redis for blocked users
-├── Mocks 3rd party SMS vendor call
-└── Publishes event to Kafka
-│
-▼
-Kafka Topic: sms-events
-│
-▼
-SMS Store Service (GoLang) - Port 8081
-│
-├── Consumes Kafka events
-├── Saves records to MongoDB
-└── Provides SMS history API
+
+Client sends request to SMS Sender (Java) on port 8080.
+SMS Sender checks Redis for blocked users.
+SMS Sender mocks 3rd party SMS vendor call.
+SMS Sender publishes event to Kafka topic sms-events.
+SMS Store (GoLang) on port 8081 consumes the Kafka event.
+SMS Store saves the record to MongoDB.
+SMS Store provides history API to retrieve records.
+
 ## Tech Stack
 
 | Technology | Version | Purpose |
@@ -34,34 +25,29 @@ SMS Store Service (GoLang) - Port 8081
 | Docker | latest | Infrastructure |
 
 ## Project Structure
-polyglot-sms/
-├── README.md
-├── sms-sender/                          ← Java Spring Boot Service
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/sms/smssender/
-│   │   │   │   ├── controller/
-│   │   │   │   │   └── SmsController.java
-│   │   │   │   ├── service/
-│   │   │   │   │   ├── SmsService.java
-│   │   │   │   │   └── KafkaProducerService.java
-│   │   │   │   ├── model/
-│   │   │   │   │   ├── SmsRequest.java
-│   │   │   │   │   └── SmsEvent.java
-│   │   │   │   └── SmsSenderApplication.java
-│   │   │   └── resources/
-│   │   │       └── application.properties
-│   │   └── test/
-│   │       └── java/com/sms/smssender/
-│   │           └── SmsSenderApplicationTests.java
-│   ├── docker-compose.yml
-│   └── pom.xml
-└── sms-store/                           ← GoLang Service
-├── main.go
-├── main_test.go
-├── go.mod
-└── go.sum
+## Project Structure
 
+- polyglot-sms/
+  - README.md
+  - sms-sender/ (Java Spring Boot Service)
+    - src/main/java/com/sms/smssender/
+      - controller/SmsController.java
+      - service/SmsService.java
+      - service/KafkaProducerService.java
+      - model/SmsRequest.java
+      - model/SmsEvent.java
+      - SmsSenderApplication.java
+    - src/main/resources/application.properties
+    - src/test/java/com/sms/smssender/
+      - SmsSenderApplicationTests.java
+    - docker-compose.yml
+    - pom.xml
+  - sms-store/ (GoLang Service)
+    - main.go
+    - main_test.go
+    - go.mod
+    - go.sum
+    
 ## Prerequisites
 
 Before running the project, make sure you have installed:
